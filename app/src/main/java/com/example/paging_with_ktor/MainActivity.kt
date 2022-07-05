@@ -16,6 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
+import com.example.paging_with_ktor.model.PostResponse
 import com.example.paging_with_ktor.ui.theme.Paging_with_ktorTheme
 import com.example.paging_with_ktor.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,22 +31,41 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Paging_with_ktorTheme {
-                val posts = viewModel.postList.observeAsState(listOf())
-                Surface(color = MaterialTheme.colors.background) {
-                    LazyColumn {
-                        items(posts.value) {
+
+                val postsList: LazyPagingItems<PostResponse> = viewModel.postPagingFlow.collectAsLazyPagingItems()
+                LazyColumn {
+                    items(postsList) {item  ->
+                        if(item != null){
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(16.dp)
                             ) {
-                                Text(text = it.title.toString(), fontSize = 20.sp)
+                                Text(text = item.title.toString(), fontSize = 20.sp)
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text(text = it.body.toString(), fontSize = 14.sp)
+                                Text(text = item.body.toString(), fontSize = 14.sp)
                             }
                         }
                     }
                 }
+
+
+//                val posts = viewModel.postList.observeAsState(listOf())
+//                Surface(color = MaterialTheme.colors.background) {
+//                    LazyColumn {
+//                        items(posts.value) {
+//                            Column(
+//                                modifier = Modifier
+//                                    .fillMaxWidth()
+//                                    .padding(16.dp)
+//                            ) {
+//                                Text(text = it.title.toString(), fontSize = 20.sp)
+//                                Spacer(modifier = Modifier.height(4.dp))
+//                                Text(text = it.body.toString(), fontSize = 14.sp)
+//                            }
+//                        }
+//                    }
+//                }
             }
         }
     }

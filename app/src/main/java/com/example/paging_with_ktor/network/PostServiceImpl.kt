@@ -11,9 +11,12 @@ class PostServiceImpl(
     private val client: HttpClient
 ) : PostService {
 
-    override suspend fun getPost(): List<PostResponse> {
+    override suspend fun getPost(userId : Int): List<PostResponse> {
         return try {
-            client.get { url(NetworkConstants.POSTS) }.body()
+            client.get {
+                url(NetworkConstants.POSTS)
+                parameter(NetworkConstants.USERID_KEY , userId)
+            }.body()
         }catch (e : Exception){
             Log.i("Client Exception",e.toString())
             emptyList()
